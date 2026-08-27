@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python-Node Notes App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>My Notes Manager</h2>
+        <form id="noteForm">
+            <input type="text" id="noteInput" placeholder="Write a note..." required>
+            <button type="submit">Save Note</button>
+        </form>
+        <ul id="notesList"></ul>
+    </div>
+
+    <script>
+        const form = document.getElementById('noteForm');
+        const input = document.getElementById('noteInput');
+        const list = document.getElementById('notesList');
+
+        // Fetch notes from server.js
+        async function loadNotes() {
+            const res = await fetch('/api/notes');
+            const notes = await res.json();
+            list.innerHTML = notes.map(n => `<li>${n}</li>`).join('');
+        }
+
+        // Post a new note
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await fetch('/api/notes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: input.value })
+            });
+            input.value = '';
+            loadNotes();
+        });
+
+        loadNotes();
+    </script>
+</body>
+</html>
