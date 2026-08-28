@@ -7,22 +7,18 @@ app.use(express.json());
 // Initialize database when server starts
 initDb().catch(err => console.error('Database initialization failed:', err));
 
-app.get('/api/notes', async (req, res) => {
+// Add this route handler to handle the root URL
+app.get('/', async (req, res) => {
   try {
     const notes = await getNotes();
-    res.json(notes);
+    // Formats your notes into a clean bulleted HTML list for the browser
+    const htmlList = notes.map(note => `<li>${note}</li>`).join('');
+    res.send(`
+      <h1>My Notes App</h1>
+      <ul>${htmlList}</ul>
+      <p>Server is running perfectly!</p>
+    `);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).send(`Error loading page: ${err.message}`);
   }
 });
-
-app.post('/api/notes', async (req, res) => {
-  try {
-    await addNote(req.body.text);
-    res.json({ status: 'success' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.listen(3000, () => console.log('Server running on port 3000'));
