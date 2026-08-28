@@ -1,8 +1,10 @@
+import os
 import sys
 import json
 import sqlite3
 
-DB_FILE = "database.db"
+# Update this path so it uses the persistent volume folder on Render
+DB_FILE = "/var/data/database.db"
 
 def init_db():
     conn = sqlite3.connect(DB_FILE)
